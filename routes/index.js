@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 var fs = require('fs');
+var count = 0;
+var ids = [];
 
 var text_to_speech = new TextToSpeechV1({
     "url": "https://stream.watsonplatform.net/text-to-speech/api",
@@ -11,9 +13,8 @@ var text_to_speech = new TextToSpeechV1({
 
 
 module.exports = function(io) {
-    var count = 0;
-
     io.on('connection', function(socket) {
+		socket.emit('sync', ids);
         socket.on('chat-message', function(data) {
             var name = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10);
             var params = {
@@ -23,15 +24,18 @@ module.exports = function(io) {
             };
 
             // Pipe the synthesized text to a file
-            text_to_speech.synthesize(params).pipe(fs.createWriteStream('output.wav'));
+            text_to_speech.synthesize(params).pipe(fs.createWriteStream(name+'.wav'));
             io.emit('chat-message', { user: data.user, msg: "/memes/" + name + ".wav" });
         });
-        socket.on('user-connected', function(msg) {
-            count++;
+        socket.on('user-connected', function(data) {
+            ids.push(data.user);
 			io.emit('user-connected', { user: data.user, msg: "/memes/connected.wav" });
         });
-        socket.on('disconnect', function(msg) {
-            count--;
+        socket.on('disconnect', function(data) {
+			var index = ids.indexOf(data.user);
+			if (index > -1) {
+			    ids.splice(index, 1);
+			}
 			io.emit('user-connected', { user: data.user, msg: "/memes/disconnected.wav" });
         });
     });
