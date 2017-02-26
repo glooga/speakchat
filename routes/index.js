@@ -47,7 +47,6 @@ module.exports = function(io) {
 	/* GET home page. */
 	router.get("/", function(req, res, next) {
 		res.render("index", {
-			title: "SpeakChat",
 			count: count
 		});
 	});
