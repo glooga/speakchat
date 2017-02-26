@@ -20,7 +20,6 @@ module.exports = function(io) {
 		socket.on("chat-message", function(data) {
 			var name = Math.random().toString(36).replace(/[^a-z]+/g, "").substr(0, 10);
 			data.msg = data.msg.replace(/[^0-10a-zA-Z\+\=\@\#\$\%\&]+/g, " ");
-			console.log(data.msg);
 			var params = {
 				text: data.msg,
 				voice: "en-US_AllisonVoice", // Optional voice
