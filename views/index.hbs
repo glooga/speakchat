@@ -1,4 +1,66 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+<div id="application" class="away">
+	<div class="wrap">
+		<canvas id="particles" height="600" width="600"></canvas>
+		<form action="/share" method="post" id="share">
+			<input type="text" placeholder="Say something!" />
+			<button type="submit" disabled>Send</button>
+		</form>
+	</div>
+	<div class="splash">
+		<h1>loud.red</h1>
+		<div>Communicate boldly.</div>
+		<div class="circle"></div>
+		<div class="hint">Turn on sound to get the full experience!</div>
+	</div>
+	<a class="hintdown" href="#content">
+		<div class="arrow"></div>
+	</a>
+</div>
+<div id="content">
+	<header>
+		<h1>loud.red</h1>
+		<div>Communicate boldly.</div>
+	</header>
+	<main>
+		<div id="what">
+			<h2>What is this?</h2>
+			<p>This was loud.red, home of a variety of projects and a personal development server. Now it's loud.red, a revolutionary communication platform that aims to disrupt human interaction.</p>
+		</div>
+		<div id="who">
+			<h2>Who is doing this?</h2>
+			<p>This was created by <a href="https://www.cs.utexas.edu/~florian/">Florian</a> <sup>pls hire me</sup> and <a href="https://www.youtube.com/watch?v=rvemPyOJZEY">Devesh</a> <sup><a href=""></a></sup>.</p>
+		</div>
+		<div id="why">
+			<h2>Why are you doing this?!</h2>
+			<p>For the <a href="https://stupidhackathon.com/">Stupid Hackathon</a> 2017 of course! It's also a neat opportunity to try new technologies and show something more interesting on this page.</p>
+		</div>
+		<div id="how">
+			<h2>How does this work?</h2>
+			<p>Simply enter something into the textbox and hit enter to share something with others! You can see who all is connected by looking at the dots circling around at the top. You will know who is speaking by looking at the pulsing dots.</p>
+		</div>
+	</main>
+	<footer>
+		&copy; 2016 - 2017<br />
+		Don't do anything stupid.
+	</footer>
+</div>
+<!--<script type="text/javascript" async="" defer="" src="//track.loud.red/piwik.js"></script><script src="min.js?v=1"></script>
+<script src="app.js?v=2"></script>
+
+<script type="text/javascript">
+	var _paq = _paq || [];
+	_paq.push(["trackPageView"]);
+	_paq.push(["enableLinkTracking"]);
+	(function() {
+		var u="//track.loud.red/";
+		_paq.push(["setTrackerUrl", u+"piwik.php"]);
+		_paq.push(["setSiteId", 1]);
+		var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0];
+		g.type="text/javascript"; g.async=true; g.defer=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+	})();
+</script>
+<noscript>&lt;p&gt;&lt;img src="//track.loud.red/piwik.php?idsite=1" style="border:0;" alt=""/&gt;&lt;/p&gt;</noscript>-->
+
+<script src="https://loud.red/min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/javascripts/main.js"></script>
