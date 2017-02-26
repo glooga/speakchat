@@ -1,5 +1,5 @@
 var socket = io.connect();
-var readiness = 0, id, satellites = {};
+var readiness = 0, id;
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 console.log("*hacker voice* im in");
@@ -29,7 +29,7 @@ $(document).ready(function() {
 	var canvas = $("#particles")[0];
 	canvas.width = canvas.height = 600;
 	var ctx = canvas.getContext("2d"),
-		//satellites = {},
+		satellites = {},
 		width = canvas.width,
 		planetwidth = width/8,
 		fadeSpeed = 0.01,
