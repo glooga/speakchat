@@ -62,6 +62,13 @@ $(document).ready(function() {
 				} else if (particle.state == "leaving") {
 					particle.transparent -= fadeSpeed;
 					if (particle.transparent <= 0) delete satellites[key];
+				} else if (particle.speaking) {
+					var array = new Uint8Array(particle.analyzer.frequencyBinCount);
+					particle.analyzer.getByteFrequencyData(array);
+					var sum = 0, average;
+					for (var i = 0; i < array.length; i++) sum += array[i];
+					average = sum/array.length/80;
+					particle.radius = 1+average;
 				}
 				ctx.fillStyle = "rgba(238,238,238,"+particle.transparent+")";
 				circle(
@@ -84,27 +91,19 @@ $(document).ready(function() {
 		request.responseType = "arraybuffer";
 		request.onload = function() {
 			context.decodeAudioData(request.response, function(buffer) {
-				var source = context.createBufferSource(), processor, analyzer;
+				var source = context.createBufferSource(), analyzer;
 				source.buffer = buffer;
 				if (speaker) {
 					analyzer = context.createAnalyser();
 					analyzer.smoothingTimeConstant = 0.3;
 					analyzer.fftSize = 1024;
-					processor = context.createScriptProcessor(2*analyzer.fftSize, 1, 1);
-					console.log("average");
 					source.connect(analyzer);
 					analyzer.connect(context.destination);
-					processor.onaudioprocess = function() {
-						var array = new Uint8Array(analyzer.frequencyBinCount);
-						analyzer.getByteFrequencyData(array);
-						var sum = 0, average;
-						for (var i = 0; i < array.length; i++) sum += array[i];
-						average = sum/array.length;
-						console.log(average);
-						satellites[speaker].speaking = true;
-						satellites[speaker].radius = 1+average;
-					}
-					source.onend = function() {
+					satellites[speaker].analyzer = analyzer;
+					satellites[speaker].speaking = true;
+					console.log("eyo");
+					source.onended = function() {
+						console.log("done");
 						satellites[speaker].speaking = false;
 						satellites[speaker].radius = 1;
 					}
@@ -128,6 +127,7 @@ $(document).ready(function() {
 			radius: 1,
 			transparent: 0,
 			speaking: false,
+			analyzer: null,
 			state: "entering"
 		}
 	}
@@ -152,7 +152,7 @@ $(document).ready(function() {
 	});
 
 	socket.on("chat-message", function(data) {
-		playAudio(data.msg);
+		playAudio(data.msg, data.user);
 	});
 });
 
