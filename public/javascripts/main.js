@@ -67,7 +67,7 @@ $(document).ready(function() {
 					particle.analyzer.getByteFrequencyData(array);
 					var sum = 0, average;
 					for (var i = 0; i < array.length; i++) sum += array[i];
-					average = sum/array.length/80;
+					average = sum/array.length/50;
 					particle.radius = 1+average;
 				}
 				ctx.fillStyle = "rgba(238,238,238,"+particle.transparent+")";
@@ -94,18 +94,21 @@ $(document).ready(function() {
 				var source = context.createBufferSource(), analyzer;
 				source.buffer = buffer;
 				if (speaker) {
-					analyzer = context.createAnalyser();
-					analyzer.smoothingTimeConstant = 0.3;
-					analyzer.fftSize = 1024;
+					var particle = satellites[speaker];
+					if (particle.speaking) {
+						analyzer = particle.analyzer;
+					} else {
+						analyzer = context.createAnalyser();
+						analyzer.smoothingTimeConstant = 0.3;
+						analyzer.fftSize = 1024;
+						analyzer.connect(context.destination);
+						particle.analyzer = analyzer;
+					}
 					source.connect(analyzer);
-					analyzer.connect(context.destination);
-					satellites[speaker].analyzer = analyzer;
-					satellites[speaker].speaking = true;
-					console.log("eyo");
+					particle.speaking++;
 					source.onended = function() {
-						console.log("done");
-						satellites[speaker].speaking = false;
-						satellites[speaker].radius = 1;
+						particle.speaking--;
+						particle.radius = 1;
 					}
 				} else {
 					source.connect(context.destination);
@@ -126,7 +129,7 @@ $(document).ready(function() {
 			theta: Math.random()*Math.PI*2,
 			radius: 1,
 			transparent: 0,
-			speaking: false,
+			speaking: 0,
 			analyzer: null,
 			state: "entering"
 		}
