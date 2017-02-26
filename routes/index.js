@@ -26,7 +26,8 @@ module.exports = function(io) {
 			};
 
 			// Pipe the synthesized text to a file
-			text_to_speech.synthesize(params).pipe(fs.createWriteStream("./public/memes/" + name+".wav")).on("finish", function() {
+			var stream = text_to_speech.synthesize(params).pipe(fs.createWriteStream("./public/memes/" + name+".wav"));
+			stream.on("finish", function() {
 				io.emit("chat-message", { user: data.user, msg: "/memes/" + name + ".wav" });
 			});
 		});

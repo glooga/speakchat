@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", routes);
 
-setInterval(findRemoveSync.bind(this, __dirname + "/public/memes", {age: {seconds: 3600}}), 360000);
+setInterval(findRemoveSync.bind(this, __dirname + "/public/memes", {extensions: [".wav"], age: {seconds: 3600}}), 360000);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
