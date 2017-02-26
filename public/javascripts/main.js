@@ -1,5 +1,5 @@
 var socket = io.connect();
-var readiness = 0, id;
+var readiness = 0, id, satellites = {};
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 console.log("*hacker voice* im in");
@@ -26,7 +26,7 @@ $(document).ready(function() {
 	var canvas = $("#particles")[0];
 	canvas.width = canvas.height = 600;
 	var ctx = canvas.getContext("2d"),
-		satellites = {},
+		//satellites = {},
 		width = canvas.width,
 		planetwidth = width/8,
 		fadeSpeed = 0.01,
@@ -126,6 +126,7 @@ $(document).ready(function() {
 
 	socket.on("sync", function(data) {
 		satellites = {};
+		console.log(data.ids);
 		for (var i = 0; i < data.ids.length; i++)
 			addUser(data.ids[i]);
 		id = data.id;
@@ -133,7 +134,8 @@ $(document).ready(function() {
 
 	socket.on("user-connected", function(data) {
 		playAudio(data.msg, data.user);
-		addUser(data.user);
+		console.log(data.user);
+		if (data.user != id) addUser(data.user);
 	});
 
 	socket.on("user-disconnected", function(data) {
