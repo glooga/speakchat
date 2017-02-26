@@ -26,8 +26,11 @@ module.exports = function(io) {
 			};
 
 			// Pipe the synthesized text to a file
-			text_to_speech.synthesize(params).pipe(fs.createWriteStream(name+".wav"));
-			io.emit("chat-message", { user: data.user, msg: "/memes/" + name + ".wav" });
+			var stream = fs.createWriteStream("./public/memes/" + name+".wav");
+			stream.on("finish", function() {
+				io.emit("chat-message", { user: data.user, msg: "/memes/" + name + ".wav" });
+			});
+			text_to_speech.synthesize(params).pipe(stream);
 		});
 		socket.on("user-connected", function() {
 			io.emit("user-connected", { user: id, msg: "/memes/connected.wav" });
@@ -37,7 +40,7 @@ module.exports = function(io) {
 			if (index > -1) {
 				ids.splice(index, 1);
 			}
-			io.emit("user-connected", { user: id, msg: "/memes/disconnected.wav" });
+			io.emit("user-disconnected", { user: id, msg: "/memes/disconnected.wav" });
 		});
 	});
 

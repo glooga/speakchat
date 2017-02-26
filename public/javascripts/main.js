@@ -9,7 +9,10 @@ $(document).ready(function() {
 	tryAppload();
 
 	$("#share").submit(function(e) {
-		alert($("#share input").val());
+		socket.emit("chat-message", {
+			msg: $("#share input").val(),
+			user: id
+		});
 		$("#share input").val("");
 		e.preventDefault();
 	}).find("input, button").blur(function() {
@@ -83,18 +86,21 @@ $(document).ready(function() {
 			context.decodeAudioData(request.response, function(buffer) {
 				var source = context.createBufferSource(), processor, analyzer;
 				source.buffer = buffer;
-				source.connect(context.destination);
 				if (speaker) {
 					analyzer = context.createAnalyser();
 					analyzer.smoothingTimeConstant = 0.3;
 					analyzer.fftSize = 1024;
 					processor = context.createScriptProcessor(2*analyzer.fftSize, 1, 1);
+					console.log("average");
+					source.connect(analyzer);
+					analyzer.connect(context.destination);
 					processor.onaudioprocess = function() {
 						var array = new Uint8Array(analyzer.frequencyBinCount);
 						analyzer.getByteFrequencyData(array);
 						var sum = 0, average;
 						for (var i = 0; i < array.length; i++) sum += array[i];
 						average = sum/array.length;
+						console.log(average);
 						satellites[speaker].speaking = true;
 						satellites[speaker].radius = 1+average;
 					}
@@ -102,6 +108,8 @@ $(document).ready(function() {
 						satellites[speaker].speaking = false;
 						satellites[speaker].radius = 1;
 					}
+				} else {
+					source.connect(context.destination);
 				}
 				source.start(0);
 			}, function() {
