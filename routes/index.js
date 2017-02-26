@@ -14,7 +14,9 @@ var text_to_speech = new TextToSpeechV1({
 
 module.exports = function(io) {
     io.on('connection', function(socket) {
-		socket.emit('sync', ids);
+		var id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10);
+		ids.push(id);
+		socket.emit('sync', { ids: ids, id:  id });
         socket.on('chat-message', function(data) {
             var name = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10);
             var params = {
@@ -28,7 +30,6 @@ module.exports = function(io) {
             io.emit('chat-message', { user: data.user, msg: "/memes/" + name + ".wav" });
         });
         socket.on('user-connected', function(data) {
-            ids.push(data.user);
 			io.emit('user-connected', { user: data.user, msg: "/memes/connected.wav" });
         });
         socket.on('disconnect', function(data) {
