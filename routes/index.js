@@ -31,14 +31,14 @@ module.exports = function(io) {
 			});
 		});
 		socket.on("user-connected", function() {
-			io.emit("user-connected", { user: id, msg: "/memes/connected.wav" });
+			io.emit("user-connected", { user: id, msg: "/connected.wav" });
 		});
 		socket.on("disconnect", function(data) {
 			var index = ids.indexOf(id);
 			if (index > -1) {
 				ids.splice(index, 1);
 			}
-			io.emit("user-disconnected", { user: id, msg: "/memes/disconnected.wav" });
+			io.emit("user-disconnected", { user: id, msg: "/disconnected.wav" });
 		});
 	});
 
