@@ -101,13 +101,13 @@ $(document).ready(function() {
 						analyzer = context.createAnalyser();
 						analyzer.smoothingTimeConstant = 0.3;
 						analyzer.fftSize = 1024;
+						analyzer.connect(context.destination);
 						particle.analyzer = analyzer;
 					}
 					source.connect(analyzer);
-					analyzer.connect(context.destination);
-					particle.speaking = true;
+					particle.speaking++;
 					source.onended = function() {
-						particle.speaking = false;
+						particle.speaking--;
 						particle.radius = 1;
 					}
 				} else {
@@ -129,7 +129,7 @@ $(document).ready(function() {
 			theta: Math.random()*Math.PI*2,
 			radius: 1,
 			transparent: 0,
-			speaking: false,
+			speaking: 0,
 			analyzer: null,
 			state: "entering"
 		}
