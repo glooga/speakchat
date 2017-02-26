@@ -1,5 +1,5 @@
 var socket = io.connect();
-var readiness = 0;
+var readiness = 0, id;
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 console.log("*hacker voice* im in");
@@ -124,24 +124,30 @@ $(document).ready(function() {
 		}
 	}
 
-	socket.on('user-connected', function(data) {
+	socket.on("sync", function(data) {
+		satellites = {};
+		for (var i = 0; i < data.ids.length; i++)
+			addUser(data.ids[i]);
+		id = data.id;
+	});
+
+	socket.on("user-connected", function(data) {
 		playAudio(data.msg, data.user);
 		addUser(data.user);
 	});
 
-	socket.on('user-disconnected', function(data) {
+	socket.on("user-disconnected", function(data) {
 		playAudio(data.msg);
 		satellites[data.user].state = "leaving";
 	});
 
-	socket.on('chat-message', function(data) {
+	socket.on("chat-message", function(data) {
 		playAudio(data.msg);
 	});
 });
 
-
-socket.on('connect', function() {
-	socket.emit('user-connected', "A user has connected.");
+socket.on("connect", function() {
+	socket.emit("user-connected", "A user has connected.");
 	readiness++;
 	tryAppload();
 });
@@ -153,11 +159,10 @@ setTimeout(function() {
 
 function tryAppload() {
 	if (readiness >= 3) {
-		//$("#share input").focus();
+		$("#share input").focus();
 		$("#application").removeClass("away");
 		setTimeout(function() {
 			$("#application .splash").hide();
 		}, 300);
 	}
 }
-
